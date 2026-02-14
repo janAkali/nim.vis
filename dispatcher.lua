@@ -170,7 +170,7 @@ local function highlight_errors(suggestions, window)
   end
   window.triggers.error_highlighter = function(win)
     if win.file.modified then return end
-    local content = win.viewport
+    local content = win.viewport.bytes
     local selection = win.selection.pos
     local message
     for _, err in pairs(errors) do
