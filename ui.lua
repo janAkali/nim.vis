@@ -25,6 +25,8 @@ function register_colors(window)
       style = s
     end
     if style ~= nil then window:style_define(id, style) end
+    existant[style] = id
+    holes[id] = nil
   end
   return lexer, setmetatable(existant, {__index = function(t, k)
     local free
