@@ -11,11 +11,20 @@ function register_colors(window)
   local existant = {}
   local lexer = vis.lexers.load("nim", nil, true)
   for i = 0, 64, 1 do holes[i] = true end
-  for name, id in pairs(lexer._TOKENSTYLES) do
-    local style = vis.lexers['STYLE_'..name:upper()] or ""
-    window:style_define(id, style)
-    existant[style] = id
-    holes[id] = nil
+  for id, token_name in ipairs(lexer._TAGS) do
+    local style = vis.lexers['STYLE_' .. token_name:upper():gsub("%.", "_")] or ''
+    if type(style) == 'table' then
+      local s = ''
+      if style.attr then
+        s = string.format("%s,%s", s, style.attr)
+      elseif style.fore then
+        s = string.format("%s,fore:%s", s, style.fore)
+      elseif style.back then
+        s = string.format("%s,back:%s", s, style.back)
+      end
+      style = s
+    end
+    if style ~= nil then window:style_define(id, style) end
   end
   return lexer, setmetatable(existant, {__index = function(t, k)
     local free
@@ -41,7 +50,7 @@ local function stylize(window, data)
     existent = window.existent
     lexer = vis.lexers.load("nim", nil, true)
   end
-  local styles = lexer._TOKENSTYLES
+  local styles = lexer._TAGS
   local paints = {}
   local tokenstart = 0
   local currenttoken = "reset"
